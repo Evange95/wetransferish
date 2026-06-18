@@ -11,12 +11,21 @@
     "test:watch": "vitest"
   },
   "dependencies": {
-    "@wetransferish/shared": "workspace:*"
+    "@wetransferish/shared": "workspace:*",
+    "fastify": "^5.1.0",
+    "@fastify/multipart": "^8.2.0",
+    "minio": "^8.0.0",
+    "pg": "^8.13.0",
+    "nanoid": "^5.0.0",
+    "archiver": "^8.0.0"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.0",
+    "@types/archiver": "^6.0.0",
     "typescript": "^5.9.0",
     "vitest": "^3.2.0",
-    "tsx": "^4.21.0"
+    "tsx": "^4.21.0",
+    "testcontainers": "^10.15.0"
   }
 }
