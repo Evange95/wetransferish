@@ -49,7 +49,6 @@ export async function downloadRoutes(app: FastifyInstance, deps: DownloadRouteDe
       return reply
         .header('Content-Type', 'application/zip')
         .header('Content-Disposition', 'attachment; filename="transfer.zip"')
-        .header('Transfer-Encoding', 'chunked')
         .send(result.value.stream);
     },
   );
@@ -71,7 +70,6 @@ export async function downloadRoutes(app: FastifyInstance, deps: DownloadRouteDe
       return reply
         .header('Content-Type', 'application/octet-stream')
         .header('Content-Disposition', `attachment; filename="${result.value.fileName.value}"`)
-        .header('Content-Length', result.value.fileSize.bytes)
         .send(result.value.stream);
     },
   );
