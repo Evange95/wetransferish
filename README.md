@@ -10,6 +10,14 @@ docker compose up --build -d
 
 Open [http://localhost](http://localhost).
 
+To populate with demo data (3 transfers, 9 files):
+
+```bash
+./scripts/seed.sh
+```
+
+This prints download links you can open right away.
+
 ## Architecture
 
 **Monorepo** (pnpm workspaces) with three packages:
