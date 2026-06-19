@@ -27,9 +27,10 @@ COPY --from=deps /app/packages/backend/node_modules ./packages/backend/node_modu
 COPY --from=build /app/packages/shared/dist ./packages/shared/dist
 COPY --from=build /app/packages/shared/src ./packages/shared/src
 COPY --from=build /app/packages/backend/dist ./packages/backend/dist
-COPY packages/shared/package.json packages/shared/
 COPY packages/backend/package.json packages/backend/
 COPY packages/backend/src/infrastructure/persistence/schema.sql packages/backend/src/infrastructure/persistence/
+
+RUN echo '{"name":"@wetransferish/shared","version":"0.0.1","private":true,"type":"module","exports":{".":"./dist/index.js"}}' > packages/shared/package.json
 
 ENV NODE_ENV=production
 EXPOSE 3000
