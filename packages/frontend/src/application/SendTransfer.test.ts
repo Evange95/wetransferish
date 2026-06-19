@@ -33,4 +33,21 @@ describe('SendTransfer', () => {
     await useCase.execute(files, () => {});
     expect(gateway.uploadedFiles).toHaveLength(4);
   });
+
+  it('respects maxConcurrency=1 to prevent race conditions', async () => {
+    const sequential = new SendTransfer(gateway, 1);
+    const files = [makeFile('a.txt', 1), makeFile('b.txt', 1), makeFile('c.txt', 1)];
+    await sequential.execute(files, () => {});
+
+    expect(gateway.uploadedFiles).toHaveLength(3);
+    expect(gateway.maxObservedConcurrency).toBe(1);
+  });
+
+  it('uploads files in order when sequential', async () => {
+    const sequential = new SendTransfer(gateway, 1);
+    const files = [makeFile('first.txt', 1), makeFile('second.txt', 1), makeFile('third.txt', 1)];
+    await sequential.execute(files, () => {});
+
+    expect(gateway.uploadedFiles.map((f) => f.fileName)).toEqual(['first.txt', 'second.txt', 'third.txt']);
+  });
 });

@@ -110,6 +110,49 @@ describe('E2E: upload → finalize → info → download', () => {
     expect(zipRes.body).toContain('test content');
   });
 
+  it('handles multiple sequential file uploads and lists all on download', async () => {
+    const createRes = await app.inject({ method: 'POST', url: '/api/transfers' });
+    const { transferId, shareLink } = createRes.json();
+
+    const fileNames = ['alpha.txt', 'beta.txt', 'gamma.txt'];
+    const attachmentIds: string[] = [];
+
+    for (const name of fileNames) {
+      const form = new FormData();
+      form.append('file', Buffer.from(`content of ${name}`), { filename: name, contentType: 'text/plain' });
+      const res = await app.inject({
+        method: 'POST',
+        url: `/api/transfers/${transferId}/attachments`,
+        payload: form,
+        headers: form.getHeaders(),
+      });
+      expect(res.statusCode).toBe(201);
+      attachmentIds.push(res.json().attachmentId);
+    }
+
+    await app.inject({ method: 'POST', url: `/api/transfers/${transferId}/finalize` });
+
+    const infoRes = await app.inject({ method: 'GET', url: `/api/transfers/${shareLink}` });
+    const info = infoRes.json();
+    expect(info.attachments).toHaveLength(3);
+    expect(info.attachments.map((a: { name: string }) => a.name)).toEqual(fileNames);
+
+    for (let i = 0; i < fileNames.length; i++) {
+      const dlRes = await app.inject({
+        method: 'GET',
+        url: `/api/transfers/${shareLink}/attachments/${attachmentIds[i]}/download`,
+      });
+      expect(dlRes.statusCode).toBe(200);
+      expect(dlRes.body).toBe(`content of ${fileNames[i]}`);
+    }
+
+    const zipRes = await app.inject({ method: 'GET', url: `/api/transfers/${shareLink}/download` });
+    expect(zipRes.statusCode).toBe(200);
+    for (const name of fileNames) {
+      expect(zipRes.body).toContain(name);
+    }
+  });
+
   it('returns 404 when creating attachments for non-existent transfer', async () => {
     const form = new FormData();
     form.append('file', Buffer.from('data'), {

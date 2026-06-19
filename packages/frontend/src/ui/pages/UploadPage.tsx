@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { DropZone } from '../components/DropZone.js';
 import { FileList } from '../components/FileList.js';
 import { ShareLinkCard } from '../components/ShareLinkCard.js';
@@ -7,6 +8,7 @@ import { formatBytes, mono, sans } from '../utils.js';
 
 export function UploadPage() {
   const { files, progressMap, state, shareLink, error, addFiles, upload, reset, removeFile } = useUpload();
+  const addMoreRef = useRef<HTMLInputElement>(null);
 
   const totalSize = files.reduce((a, f) => a + f.size, 0);
   const count = files.length;
@@ -22,8 +24,15 @@ export function UploadPage() {
   const isDone = state === 'done';
   const isFiles = state === 'idle' && count > 0;
 
+  const onPickMore = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files?.length) addFiles(Array.from(e.target.files));
+    e.target.value = '';
+  };
+
   return (
     <PageShell>
+      <input type="file" multiple ref={addMoreRef} onChange={onPickMore} style={{ display: 'none' }} />
+
       {isIdle && count === 0 && (
         <DropZone onFiles={addFiles} />
       )}
@@ -56,7 +65,7 @@ export function UploadPage() {
 
           {isFiles && (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-              <button onClick={() => document.querySelector<HTMLInputElement>('input[type=file]')?.click()} style={{
+              <button onClick={() => addMoreRef.current?.click()} style={{
                 alignSelf: 'flex-start', display: 'flex', alignItems: 'center', gap: 7,
                 padding: '9px 14px', borderRadius: 10, border: '1px solid rgba(23,21,15,.12)',
                 background: 'transparent', color: '#56524a', fontFamily: sans, fontSize: 13.5, cursor: 'pointer',

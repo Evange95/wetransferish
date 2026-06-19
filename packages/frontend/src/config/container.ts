@@ -4,5 +4,5 @@ import { FetchTransferInfo } from '../application/FetchTransferInfo.js';
 
 const gateway = new HttpTransferGateway();
 
-export const sendTransfer = new SendTransfer(gateway, 3);
+export const sendTransfer = new SendTransfer(gateway, 1);
 export const fetchTransferInfo = new FetchTransferInfo(gateway);
