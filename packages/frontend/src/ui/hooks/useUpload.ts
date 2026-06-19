@@ -39,6 +39,10 @@ export function useUpload() {
     }
   };
 
+  const removeFile = (index: number) => {
+    setFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const reset = () => {
     setFiles([]);
     setProgressMap(new Map());
@@ -47,5 +51,5 @@ export function useUpload() {
     setError(null);
   };
 
-  return { files, progressMap, state, shareLink, error, isPending, addFiles, upload, reset };
+  return { files, progressMap, state, shareLink, error, isPending, addFiles, upload, reset, removeFile };
 }
