@@ -1,3 +1,4 @@
+// @ts-expect-error archiver v8 exports ZipArchive but @types/archiver lacks it
 import { ZipArchive } from 'archiver';
 import type { Readable } from 'node:stream';
 import type { ArchiveCreator, ArchiveEntry } from '../../domain/port/ArchiveCreator.js';
